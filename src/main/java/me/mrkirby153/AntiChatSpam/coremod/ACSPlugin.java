@@ -6,6 +6,7 @@ import java.util.Map;
 
 @IFMLLoadingPlugin.MCVersion("1.7.10")
 @IFMLLoadingPlugin.TransformerExclusions({"me.mrkirby153.AntiChatSpam.coremod"})
+@IFMLLoadingPlugin.SortingIndex(1001)
 public class ACSPlugin implements IFMLLoadingPlugin{
     @Override
     public String[] getASMTransformerClass() {
