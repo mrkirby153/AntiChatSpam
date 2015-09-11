@@ -15,6 +15,11 @@ public class ChatHandler {
 
 
     public static boolean hasHandledChat(IChatComponent component){
+        System.out.println("Ding!");
         return false;
+    }
+
+    public static void doThings(){
+        System.out.println("It works");
     }
 }

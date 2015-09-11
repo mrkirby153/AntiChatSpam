@@ -2,6 +2,7 @@ package me.mrkirby153.AntiChatSpam.coremod;
 
 import me.mrkirby153.AntiChatSpam.regex.ChatHandler;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.util.IChatComponent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -89,9 +90,11 @@ public class ACSClassTransformer implements IClassTransformer{
             mv.visitVarInsn(ALOAD, 1);
             mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/client/gui/GuiNewChat", "printChatMessage", "(Lnet/minecraft/util/IChatComponent;)V", false);
          WIT
-            ALOAD 0
-            INVOKESTATIC ChatHandler.hasHandledChat()
-            IFNE newLabelNode
+            ALOAD 1
+            INVOKESTATIC me/mrkirby153/AntiChatSpam/regex/ChatHandler.hasHandledChat (Lnet/minecraft/util/IChatComponent;)Z
+            IFEQ newLabelNode
+            newLableNode
+            RETURN
             mv.visitVarInsn(ALOAD, 0);
             mv.visitFieldInsn(GETFIELD, "net/minecraft/client/entity/EntityPlayerSP", "mc", "Lnet/minecraft/client/Minecraft;");
             v.visitFieldInsn(GETFIELD, "net/minecraft/client/Minecraft", "ingameGUI", "Lnet/minecraft/client/gui/GuiIngame;");
@@ -100,19 +103,24 @@ public class ACSClassTransformer implements IClassTransformer{
             mv.visitMethodInsn(INVOKEVIRTUAL, "net/minecraft/client/gui/GuiNewChat", "printChatMessage", "(Lnet/minecraft/util/IChatComponent;)V", false);
             LABEL newLabelNode
          */
-        AbstractInsnNode invokeVirtualPrint = targetNode;
-        for(int i = 0; i < 5; i++){
-            invokeVirtualPrint = invokeVirtualPrint.getNext();
-        }
-        LabelNode newLabelNode = new LabelNode();
-        InsnList toInsert = new InsnList();
-        toInsert.add(new VarInsnNode(ALOAD, 1));
-        final String HAS_HANDLED_CHAT_DESCRIPTOR = (obfuscated)? "(Lfj;)V" : "(Lnet/minecraft/util/IChatComponent;)V";
-        toInsert.add(new MethodInsnNode(INVOKESTATIC, Type.getInternalName(ChatHandler.class), "hasHandledChat", HAS_HANDLED_CHAT_DESCRIPTOR, false));
-        toInsert.add(new JumpInsnNode(IFNE, newLabelNode));
 
-        targetMethod.instructions.insertBefore(targetNode, toInsert);
-        targetMethod.instructions.insert(invokeVirtualPrint, newLabelNode);
+        AbstractInsnNode insertPoint = targetNode.getPrevious();
+        LabelNode returnLabel = new LabelNode();
+        InsnList toInsert = new InsnList();
+        Type chatHandlerType = Type.getType(ChatHandler.class);
+        String handlerDescriptor;
+        try {
+            handlerDescriptor = Type.getMethodDescriptor(ChatHandler.class.getMethod("hasHandledChat", IChatComponent.class));
+        } catch (Exception e){
+            logger.catching(e);
+            return;
+        }
+        toInsert.add(new VarInsnNode(ALOAD, 1));
+        toInsert.add(new MethodInsnNode(INVOKESTATIC, chatHandlerType.getInternalName(), "hasHandledChat", handlerDescriptor, false));
+        toInsert.add(new JumpInsnNode(IFNE, returnLabel));
+        toInsert.add(returnLabel);
+        toInsert.add(new InsnNode(RETURN));
+        targetMethod.instructions.insert(insertPoint, toInsert);
 
         for(AbstractInsnNode n : targetMethod.instructions.toArray()){
             System.out.println(n.getOpcode());
