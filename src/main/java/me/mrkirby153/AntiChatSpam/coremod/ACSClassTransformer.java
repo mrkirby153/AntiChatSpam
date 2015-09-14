@@ -10,10 +10,7 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
-import org.objectweb.asm.util.TraceClassVisitor;
 
-import java.io.FileOutputStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -44,8 +41,6 @@ public class ACSClassTransformer implements IClassTransformer{
             handleTransformation(index, classNode, obfuscated);
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             classNode.accept(classWriter);
-            ClassReader outputClassreader = new ClassReader(classWriter.toByteArray());
-            outputClassreader.accept(new TraceClassVisitor(new PrintWriter(new FileOutputStream("class.txt"))), 0);
             return classWriter.toByteArray();
         } catch (Exception e){
             logger.catching(Level.FATAL, e);
@@ -138,9 +133,6 @@ public class ACSClassTransformer implements IClassTransformer{
         }
         targetMethod.instructions.insertBefore(labelInsPoint.getNext(), returnLabel);
 
-        for(AbstractInsnNode n : targetMethod.instructions.toArray()){
-            System.out.println(n.getOpcode());
-        }
     }
 
     private MethodNode findTargetNode(ClassNode classNode, String methodName, String methodDescriptor) {
