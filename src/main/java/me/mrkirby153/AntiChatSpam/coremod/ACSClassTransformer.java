@@ -10,7 +10,10 @@ import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.*;
+import org.objectweb.asm.util.TraceClassVisitor;
 
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import static org.objectweb.asm.Opcodes.*;
@@ -41,6 +44,8 @@ public class ACSClassTransformer implements IClassTransformer{
             handleTransformation(index, classNode, obfuscated);
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
             classNode.accept(classWriter);
+            ClassReader outputClassreader = new ClassReader(classWriter.toByteArray());
+            outputClassreader.accept(new TraceClassVisitor(new PrintWriter(new FileOutputStream("class.txt"))), 0);
             return classWriter.toByteArray();
         } catch (Exception e){
             logger.catching(Level.FATAL, e);
@@ -118,9 +123,20 @@ public class ACSClassTransformer implements IClassTransformer{
         toInsert.add(new VarInsnNode(ALOAD, 1));
         toInsert.add(new MethodInsnNode(INVOKESTATIC, chatHandlerType.getInternalName(), "hasHandledChat", handlerDescriptor, false));
         toInsert.add(new JumpInsnNode(IFNE, returnLabel));
-        toInsert.add(returnLabel);
-        toInsert.add(new InsnNode(RETURN));
         targetMethod.instructions.insert(insertPoint, toInsert);
+        // Add return label
+        AbstractInsnNode labelInsPoint = targetNode;
+        while(true){
+            labelInsPoint = labelInsPoint.getNext();
+            if(labelInsPoint.getOpcode() == INVOKEVIRTUAL){
+                if(((MethodInsnNode) labelInsPoint).name.equalsIgnoreCase("printChatMessage")){
+                    break;
+                } else {
+                    System.out.println("Skipping over "+((MethodInsnNode) labelInsPoint).name);
+                }
+            }
+        }
+        targetMethod.instructions.insertBefore(labelInsPoint.getNext(), returnLabel);
 
         for(AbstractInsnNode n : targetMethod.instructions.toArray()){
             System.out.println(n.getOpcode());
