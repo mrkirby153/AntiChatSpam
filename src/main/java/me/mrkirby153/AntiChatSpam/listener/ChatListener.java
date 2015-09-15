@@ -1,12 +1,10 @@
 package me.mrkirby153.AntiChatSpam.listener;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent;
-import cpw.mods.fml.relauncher.Side;
 import me.mrkirby153.AntiChatSpam.regex.ChatHandler;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
+import me.mrkirby153.AntiChatSpam.regex.CommandHandler;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.event.ServerChatEvent;
 
 import java.util.Random;
 
@@ -20,12 +18,14 @@ public class ChatListener {
     }
 
     @SubscribeEvent
-    public void chat(TickEvent.ClientTickEvent event) {
-        if (event.side == Side.CLIENT) {
-            if (event.phase == TickEvent.Phase.START) {
-                if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().thePlayer != null)
-                    Minecraft.getMinecraft().thePlayer.addChatComponentMessage(new ChatComponentText("Test "+random.nextInt(Integer.MAX_VALUE)));
-            }
+    public void commandEvent(ServerChatEvent event){
+        if(event.message.startsWith("!acs")){
+            event.setCanceled(true);
+            String message = event.message.substring(4, event.message.length());
+            String[] args = message.split(" ");
+            String[] trimmedArgs = new String[args.length - 1];
+            System.arraycopy(args, 1, trimmedArgs, 0, args.length - 1);
+            CommandHandler.run(event.player, trimmedArgs);
         }
     }
 }
