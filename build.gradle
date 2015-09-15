@@ -29,6 +29,7 @@ jar{
     manifest{
         attributes 'FMLCorePlugin': 'me.mrkirby153.AntiChatSpam.coremod.ACSPlugin'
         attributes 'FMLCorePluginContainsMod': 'true'
+        attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
 }
 sourceCompatibility = 1.7
@@ -68,3 +69,5 @@ processResources
         exclude 'mcmod.info'
     }
 }
+
+sourceSets { main { output.resourcesDir = output.classesDir } }
