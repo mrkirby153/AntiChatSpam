@@ -6,10 +6,8 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
-import me.mrkirby153.AntiChatSpam.network.PacketAntiSpam;
+import me.mrkirby153.AntiChatSpam.listener.ChatListener;
 import me.mrkirby153.AntiChatSpam.regex.ChatHandler;
-import me.mrkirby153.AntiChatSpam.test.ChatListener;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,7 +26,6 @@ public class AntiChatSpam {
     public void preInit(FMLPreInitializationEvent event){
         logger = LogManager.getLogger("AntiChatSpam");
         network = NetworkRegistry.INSTANCE.newSimpleChannel("AntiChatSpam");
-        network.registerMessage(PacketAntiSpam.Handler.class, PacketAntiSpam.class, 0, Side.CLIENT);
     }
 
     @Mod.EventHandler
