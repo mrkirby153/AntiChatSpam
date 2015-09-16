@@ -65,7 +65,7 @@ public class CommandHandler {
             Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(new ChatComponentText(EnumChatFormatting.RED + "There are no active filters"), startId++);
         }
         for (Map.Entry<String, Integer> entry : ChatHandler.filters.entrySet()) {
-            String rawJson = StatCollector.translateToLocal("chat.acsFilter");
+            String rawJson = StatCollector.translateToLocal("acs.chat.acsFilter");
             String escapedRegex = entry.getKey().replace("\\", "\\\\\\");
             rawJson = rawJson.replaceAll("@filter_id@", Integer.toString(entry.getValue()));
             escapedRegex = escapedRegex.replace("\"", "\\\"");
