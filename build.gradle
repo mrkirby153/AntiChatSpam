@@ -21,6 +21,10 @@ version = "1.0"
 group= "me.mrkirby153" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "AntiChatSpam"
 
+ext{
+    mc_version = "1.7.10"
+}
+
 minecraft {
     version = "1.7.10-10.13.4.1492-1.7.10"
     runDir = "eclipse"
@@ -50,6 +54,11 @@ dependencies {
 
 }
 
+minecraft {
+    replaceIn "reference/Strings.java"
+    replace "@VERSION@", "${project.version}"
+    replace "@MC_VERSION@", "${mc_version}"
+}
 processResources
 {
     // this will ensure that this task is redone when the versions change.
