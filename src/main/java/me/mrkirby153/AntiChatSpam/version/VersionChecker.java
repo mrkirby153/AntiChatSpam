@@ -38,7 +38,7 @@ public class VersionChecker {
                 player.addChatComponentMessage(new ChatComponentTranslation("acs.chat.wrongMcVersion").setChatStyle(style));
                 status = VersionStatus.WRONG_MC_VERSION;
             }
-            if (!Strings.MC_VERSION.equals(remoteVersion)) {
+            if (!Strings.VERSION.equals(remoteVersion)) {
                 IChatComponent component_1 = IChatComponent.Serializer.func_150699_a(StatCollector.translateToLocal("acs.chat.outdated.1"));
                 IChatComponent component_2 = IChatComponent.Serializer.func_150699_a(StatCollector.translateToLocal("acs.chat.outdated.2").replace("@VERSION@", Strings.VERSION).replace("@MC_VERSION@", Strings.MC_VERSION).replace("@NEW_VERSION@", remoteVersion));
                 player.addChatComponentMessage(component_1);
