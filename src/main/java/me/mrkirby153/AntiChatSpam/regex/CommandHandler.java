@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.*;
 
-import java.util.Arrays;
 import java.util.Map;
 
 public class CommandHandler {
@@ -14,8 +13,8 @@ public class CommandHandler {
     private static int nextId = START_ID;
 
     public static void run(EntityPlayer player, String[] args) {
-        System.out.println(Arrays.toString(args));
         if (args.length == 0) {
+            printTemporaryChat(new ChatComponentText("Type !acs help to access the help").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.LIGHT_PURPLE)));
             // List every message
             printFilters();
             return;
