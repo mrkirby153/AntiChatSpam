@@ -2,10 +2,7 @@ package me.mrkirby153.AntiChatSpam.regex;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.*;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -13,6 +10,8 @@ import java.util.Map;
 public class CommandHandler {
 
     private static int lastEndId;
+    private final static int START_ID = 15000;
+    private static int nextId = START_ID;
 
     public static void run(EntityPlayer player, String[] args) {
         System.out.println(Arrays.toString(args));
@@ -20,6 +19,15 @@ public class CommandHandler {
             // List every message
             printFilters();
             return;
+        }
+        if (args.length == 1) {
+            // Show help
+            if (args[0].equalsIgnoreCase("help")) {
+                clearChat();
+                showHelp();
+            }
+            if (args[0].equalsIgnoreCase("dismissHelp"))
+                clearChat();
         }
         if (args.length == 2) {
             if (args[0].equalsIgnoreCase("delete")) {
@@ -53,16 +61,20 @@ public class CommandHandler {
         }
     }
 
+    private static void showHelp() {
+        printTemporaryChat(new ChatComponentText("Click on [EDIT] or [DELETE] to edit or delete filters."));
+        printTemporaryChat(generateHelpChat("!acs", "Shows all active filters"));
+        printTemporaryChat(generateHelpChat("!acs add <regex>", "Adds a new filter with the corresponding regular expression."));
+        printTemporaryChat(generateHelpChat("!acs delete <id>", "Deletes filter by its internal id."));
+        printTemporaryChat(generateHelpChat("!acs edit <id> <new regex>", "Sets the regex identified by id to the new regex."));
+        printTemporaryChat(IChatComponent.Serializer.func_150699_a(StatCollector.translateToLocal("acs.chat.dismissHelp")));
+    }
+
 
     private static void printFilters() {
-        int startId = 15000;
-        for (int i = 0; i < (lastEndId - startId) + 1; i++) {
-            int msgNum = startId++;
-            Minecraft.getMinecraft().ingameGUI.getChatGUI().deleteChatLine(msgNum);
-        }
-        startId = 15000;
+        clearChat();
         if (ChatHandler.filters.entrySet().size() < 1) {
-            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(new ChatComponentText(EnumChatFormatting.RED + "There are no active filters"), startId++);
+            printTemporaryChat(new ChatComponentText("There are no filters to display!").setChatStyle(new ChatStyle().setColor(EnumChatFormatting.RED)));
         }
         for (Map.Entry<String, Integer> entry : ChatHandler.filters.entrySet()) {
             String rawJson = StatCollector.translateToLocal("acs.chat.acsFilter");
@@ -71,9 +83,33 @@ public class CommandHandler {
             escapedRegex = escapedRegex.replace("\"", "\\\"");
             rawJson = rawJson.replace("@filter@", "\\\"" + escapedRegex + "\\\"");
             IChatComponent filter = IChatComponent.Serializer.func_150699_a(rawJson);
-            int newId = startId++;
-            Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(filter, newId);
+            printTemporaryChat(filter);
         }
-        lastEndId = startId;
+    }
+
+
+    public static void clearChat() {
+        nextId = START_ID;
+        int msgCountDelete = (lastEndId - nextId);
+        for (int i = 0; i <= msgCountDelete; i++) {
+            int msgNum = nextId++;
+            Minecraft.getMinecraft().ingameGUI.getChatGUI().deleteChatLine(msgNum);
+        }
+        nextId = START_ID;
+    }
+
+    public static void printTemporaryChat(String message) {
+        printTemporaryChat(new ChatComponentText(message));
+    }
+
+    public static void printTemporaryChat(IChatComponent component) {
+        Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessageWithOptionalDeletion(component, nextId++);
+        lastEndId = nextId;
+    }
+
+    private static IChatComponent generateHelpChat(String command, String helpText) {
+        return new ChatComponentText(command).appendSibling(new ChatComponentText(" - " + helpText).
+                setChatStyle(new ChatStyle().setColor(EnumChatFormatting.AQUA))).setChatStyle(new ChatStyle().
+                setColor(EnumChatFormatting.GOLD));
     }
 }

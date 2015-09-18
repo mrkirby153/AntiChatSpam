@@ -1,5 +1,5 @@
 acs.chat.acsFilter=  ["",{"text":"     @filter@","color":"gold","insertion":"/tellraw @p %s"},{"text":"     [EDIT]","color":"light_purple","insertion":"/tellraw @p %s","clickEvent":{"action":"suggest_command","value":"!acs edit @filter_id@ @filter@"},"hoverEvent":{"action":"show_text","value":{"text":"","extra":[{"text":"Edit this filter"}]}}},{"text":"   [DELETE]","color":"dark_red","clickEvent":{"action":"run_command","value":"!acs delete @filter_id@"},"hoverEvent":{"action":"show_text","value":{"text":"","extra":[{"text":"Delete this filter FOREVER"}]}},"insertion":"/tellraw @p %s"}]
-
+acs.chat.dismissHelp= ["",{"text":"[DISMISS]","color":"green","clickEvent":{"action":"run_command","value":"!acs dismissHelp"}}]
 # Version check
 acs.chat.wrongMcVersion=Anti Chat Spam is running on a potentially unsupported version of Minecraft. Support will not be given
 acs.chat.incorrectInternalVersion={"text":"Anti Chat Spam did not find a valid version string (@V@)",color:"aqua"}
