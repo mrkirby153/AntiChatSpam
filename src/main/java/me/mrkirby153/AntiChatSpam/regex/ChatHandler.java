@@ -34,7 +34,7 @@ public class ChatHandler {
             }
             reader.close();
         } catch (IOException e) {
-            AntiChatSpam.instance.logger.catching(Level.FATAL, e);
+            AntiChatSpam.logger.catching(Level.FATAL, e);
         }
     }
 
@@ -50,12 +50,12 @@ public class ChatHandler {
             writer.flush();
             writer.close();
         } catch (IOException e) {
-            AntiChatSpam.instance.logger.catching(Level.FATAL, e);
+            AntiChatSpam.logger.catching(Level.FATAL, e);
         }
     }
 
     public static void add(String pattern, boolean save) {
-        AntiChatSpam.instance.logger.info(String.format("Adding filter \"%s\"", pattern));
+        AntiChatSpam.logger.info(String.format("Adding filter \"%s\"", pattern));
         filters.put(pattern, startingTextId++);
         if (save)
             save();

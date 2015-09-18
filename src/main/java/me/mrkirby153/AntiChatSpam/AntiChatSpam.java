@@ -22,7 +22,7 @@ public class AntiChatSpam {
     @Mod.Instance("AntiChatSpam")
     public static AntiChatSpam instance;
 
-    public Logger logger;
+    public static Logger logger;
     private VersionChecker checker;
 
     @Mod.EventHandler
